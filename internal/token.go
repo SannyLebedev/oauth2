@@ -60,6 +60,7 @@ type Token struct {
 // providers returning a token in JSON form.
 type tokenJSON struct {
 	AccessToken  string         `json:"access_token"`
+	IDToken      string         `json:"id_token"`
 	TokenType    string         `json:"token_type"`
 	RefreshToken string         `json:"refresh_token"`
 	ExpiresIn    expirationTime `json:"expires_in"` // at least PayPal returns string, while most return number
@@ -253,8 +254,14 @@ func doTokenRoundTrip(ctx context.Context, req *http.Request) (*Token, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		actualToken := vals.Get("access_token")
+		if actualToken == "" {
+			actualToken = vals.Get("id_token")
+		}
+
 		token = &Token{
-			AccessToken:  vals.Get("access_token"),
+			AccessToken:  actualToken,
 			TokenType:    vals.Get("token_type"),
 			RefreshToken: vals.Get("refresh_token"),
 			Raw:          vals,
@@ -269,8 +276,14 @@ func doTokenRoundTrip(ctx context.Context, req *http.Request) (*Token, error) {
 		if err = json.Unmarshal(body, &tj); err != nil {
 			return nil, err
 		}
+
+		actualToken := tj.AccessToken
+		if actualToken == "" {
+			actualToken = tj.IDToken
+		}
+
 		token = &Token{
-			AccessToken:  tj.AccessToken,
+			AccessToken:  actualToken,
 			TokenType:    tj.TokenType,
 			RefreshToken: tj.RefreshToken,
 			Expiry:       tj.expiry(),
