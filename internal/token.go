@@ -60,6 +60,7 @@ type Token struct {
 // https://datatracker.ietf.org/doc/html/rfc6749#section-5.1
 type tokenJSON struct {
 	AccessToken  string         `json:"access_token"`
+	IDToken      string         `json:"id_token"` // for some unusual cases
 	TokenType    string         `json:"token_type"`
 	RefreshToken string         `json:"refresh_token"`
 	ExpiresIn    expirationTime `json:"expires_in"` // at least PayPal returns string, while most return number
@@ -285,8 +286,14 @@ func doTokenRoundTrip(ctx context.Context, req *http.Request) (*Token, error) {
 		retrieveError.ErrorCode = vals.Get("error")
 		retrieveError.ErrorDescription = vals.Get("error_description")
 		retrieveError.ErrorURI = vals.Get("error_uri")
+
+		actualAccessToken := vals.Get("access_token")
+		if actualAccessToken == "" {
+			actualAccessToken = vals.Get("id_token")
+		}
+
 		token = &Token{
-			AccessToken:  vals.Get("access_token"),
+			AccessToken:  actualAccessToken,
 			TokenType:    vals.Get("token_type"),
 			RefreshToken: vals.Get("refresh_token"),
 			Raw:          vals,
@@ -307,8 +314,13 @@ func doTokenRoundTrip(ctx context.Context, req *http.Request) (*Token, error) {
 		retrieveError.ErrorCode = tj.ErrorCode
 		retrieveError.ErrorDescription = tj.ErrorDescription
 		retrieveError.ErrorURI = tj.ErrorURI
+		actualAccessToken := tj.AccessToken
+		if actualAccessToken == "" {
+			actualAccessToken = tj.IDToken
+		}
+
 		token = &Token{
-			AccessToken:  tj.AccessToken,
+			AccessToken:  actualAccessToken,
 			TokenType:    tj.TokenType,
 			RefreshToken: tj.RefreshToken,
 			Expiry:       tj.expiry(),
