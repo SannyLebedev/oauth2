@@ -19,7 +19,7 @@ import (
 	"net/url"
 	"time"
 
-	"golang.org/x/oauth2"
+	"github.com/SannyLebedev/oauth2"
 )
 
 var (

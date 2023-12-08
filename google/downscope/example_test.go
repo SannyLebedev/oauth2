@@ -7,8 +7,8 @@ package downscope_test
 import (
 	"context"
 
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google/downscope"
+	"github.com/SannyLebedev/oauth2"
+	"github.com/SannyLebedev/oauth2/google/downscope"
 )
 
 func ExampleNewTokenSource() {

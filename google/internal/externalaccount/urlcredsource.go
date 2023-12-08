@@ -9,10 +9,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"golang.org/x/oauth2"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/SannyLebedev/oauth2"
 )
 
 type urlCredentialSource struct {
