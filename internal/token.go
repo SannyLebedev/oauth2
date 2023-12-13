@@ -20,6 +20,8 @@ import (
 	"sync"
 	"time"
 
+	"log"
+
 	"golang.org/x/net/context/ctxhttp"
 )
 
@@ -257,6 +259,7 @@ func doTokenRoundTrip(ctx context.Context, req *http.Request) (*Token, error) {
 
 		actualToken := vals.Get("access_token")
 		if actualToken == "" {
+			log.Print("access_token is empty, looking for id_token")
 			actualToken = vals.Get("id_token")
 		}
 
@@ -279,6 +282,7 @@ func doTokenRoundTrip(ctx context.Context, req *http.Request) (*Token, error) {
 
 		actualToken := tj.AccessToken
 		if actualToken == "" {
+			log.Print("access_token is empty, looking for id_token")
 			actualToken = tj.IDToken
 		}
 
